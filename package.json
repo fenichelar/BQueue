@@ -1,0 +1,33 @@
+{
+  "name": "bqueue",
+  "version": "0.0.0",
+  "description": "Redis Enterprise/cluster batch messaging queueing",
+  "license": "MIT",
+  "author": {
+    "name": "Alec Fenichel",
+    "email": "alec.fenichel@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fenichelar/bqueue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fenichelar/bqueue/issues"
+  },
+  "keywords": [
+    "redis",
+    "queue",
+    "batch"
+  ],
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lua/"
+  ],
+  "scripts": {
+  },
+  "dependencies": {
+    "ioredis": "^3.1.1",
+    "uuid": "^3.1.0"
+  }
+}
