@@ -40,7 +40,7 @@ function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
 
 BQueue.prototype.pushMessage = function(message = '') {
   return new Promise((resolve, reject) => {
-    const queueNumber = Math.floor(Math.random()*this.queueCount);
+    const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
     const id = uuid.v4();
     this.redisClient.pushMessage(queue, id, JSON.stringify({id, message}), (err, result) => {
@@ -64,7 +64,7 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
     } else if (processingTimeout < 1000 || processingTimeout > 604800000) {
       return reject(Error('Processing timeout must be between 1000 and 604800000!'));
     }
-    const queueNumber = Math.floor(Math.random()*this.queueCount);
+    const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
     this.redisClient.getBatch(queue, batchSize, processingTimeout, (err, results) => {
       if (err) {
@@ -93,7 +93,7 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
 
 BQueue.prototype.reinsertUnprocessed = function() {
   return new Promise((resolve, reject) => {
-    const queueNumber = Math.floor(Math.random()*this.queueCount);
+    const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
     this.redisClient.reinsertUnprocessed(queue, (err, result) => {
       if (err) {
