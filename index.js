@@ -1,10 +1,11 @@
 const uuid = require('uuid');
 const fs = require('fs');
+const path = require('path');
 
-const pushMessageScript = fs.readFileSync('lua/pushMessage.lua').toString();
-const getBatchScript = fs.readFileSync('lua/getBatch.lua').toString();
-const removeMessagesScript = fs.readFileSync('lua/removeMessages.lua').toString();
-const reinsertUnprocessedScript = fs.readFileSync('lua/reinsertUnprocessed.lua').toString();
+const pushMessageScript = fs.readFileSync(path.join(__dirname, 'lua/pushMessage.lua')).toString();
+const getBatchScript = fs.readFileSync(path.join(__dirname, 'lua/getBatch.lua')).toString();
+const removeMessagesScript = fs.readFileSync(path.join(__dirname, 'lua/removeMessages.lua')).toString();
+const reinsertUnprocessedScript = fs.readFileSync(path.join(__dirname, 'lua/reinsertUnprocessed.lua')).toString();
 
 function BQueue(redisClient, queueCount = 1) {
   if (!Number.isInteger(queueCount)) {
