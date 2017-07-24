@@ -1,4 +1,4 @@
-local queue = KEYS[1];
+local queue = KEYS[1]
 local queueKey = '{' .. queue .. '}:messages'
 local processingKey = '{' .. queue .. '}:processing'
 local processingMessages = redis.call("LRANGE", processingKey, -500, -1)
