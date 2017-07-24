@@ -1,6 +1,6 @@
 {
   "name": "bqueue",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Reliable, distributed batch message processing using Redis",
   "license": "MIT",
   "author": {
@@ -24,8 +24,7 @@
     "index.js",
     "lua/"
   ],
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "ioredis": "^3.1.1",
     "uuid": "^3.1.0"
