@@ -6,12 +6,12 @@ local processingKey = '{' .. queue .. '}:processing'
 local messages = {}
 while size > 0 do
   size = size - 1
-  local id = redis.call("RPOPLPUSH", queueKey, processingKey)
+  local id = redis.call('RPOPLPUSH', queueKey, processingKey)
   if not id then return messages end
   local messageKey = queueKey .. ':' .. id
   local messageProcessingKey = messageKey .. ':processing'
-  local message = redis.call("GET", messageKey)
+  local message = redis.call('GET', messageKey)
   table.insert(messages, message)
-  redis.call("PSETEX", messageProcessingKey, timeout, 1)
+  redis.call('PSETEX', messageProcessingKey, timeout, 1)
 end
 return messages
