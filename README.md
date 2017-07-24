@@ -2,10 +2,9 @@
 
 A simple library for reliable, distributed batch message processing using Redis. Distributes the queue across multiple Redis instances in a cluster for virtually limitless scaling.
 
-### Dependencies
+### Requirements
 
-- [ioredis](https://github.com/luin/ioredis)
-- [uuid](https://github.com/kelektiv/node-uuid)
+An [ioredis](https://github.com/luin/ioredis) (or ioredis API compatible) instance must be passed to BQueue on initialization.
 
 ### Install
 
