@@ -22,7 +22,7 @@ const ioredis = require('ioredis');
 const bqueue = require('bqueue');
 let redisClient = new ioredis();
 const queueCount = 10;
-let queue = new BQueue(redisClient, queueCount)
+let queue = new BQueue(redisClient, queueCount);
 ```
 
 ### Add a message to the queue
