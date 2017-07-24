@@ -12,8 +12,8 @@ function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
     throw new Error('Queue name must be a string!');
   } else if (!Number.isInteger(queueCount)) {
     throw new Error('Queue count must be an integer!');
-  } else if (queueCount < 1 || queueCount > 100) {
-    throw new Error('Queue count must be between 1 and 100!');
+  } else if (queueCount < 1 || queueCount > 1000) {
+    throw new Error('Queue count must be between 1 and 1000!');
   }
 
   this.redisClient = redisClient;
@@ -53,12 +53,12 @@ BQueue.prototype.pushMessage = function(message = '') {
   });
 };
 
-BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
+BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000) {
   return new Promise((resolve, reject) => {
-    if (!Number.isInteger(batchSize)) {
-      return reject(Error('Batch size must be an integer!'));
-    } else if (batchSize < 1 || batchSize > 1000) {
-      return reject(Error('Batch batchSize must be between 1 and 1000!'));
+    if (!Number.isInteger(maxBatchSize)) {
+      return reject(Error('Max batch size must be an integer!'));
+    } else if (maxBatchSize < 1 || maxBatchSize > 10000) {
+      return reject(Error('Max batch sizee must be between 1 and 10000!'));
     } else if (!Number.isInteger(processingTimeout)) {
       return reject(Error('Processing timeout must be an integer!'));
     } else if (processingTimeout < 1000 || processingTimeout > 604800000) {
@@ -66,7 +66,7 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
     }
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
-    this.redisClient.getBatch(queue, batchSize, processingTimeout, (err, results) => {
+    this.redisClient.getBatch(queue, maxBatchSize, processingTimeout, (err, results) => {
       if (err) {
         return reject(err);
       } else {
@@ -91,11 +91,16 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
   });
 };
 
-BQueue.prototype.reinsertUnprocessed = function() {
+BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000) {
+  if (!Number.isInteger(maxMessages)) {
+    return reject(Error('Max messages must be an integer!'));
+  } else if (maxMessages < 1 || maxMessages > 10000) {
+    return reject(Error('Max messages must be between 1 and 10000!'));
+  }
   return new Promise((resolve, reject) => {
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
-    this.redisClient.reinsertUnprocessed(queue, (err, result) => {
+    this.redisClient.reinsertUnprocessed(queue, maxMessages, (err, result) => {
       if (err) {
         return reject(err);
       } else {
