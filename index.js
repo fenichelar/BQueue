@@ -1,11 +1,5 @@
 const uuid = require('uuid');
-const fs = require('fs');
-const path = require('path');
-
-const pushMessageScript = fs.readFileSync(path.join(__dirname, 'lua/pushMessage.lua')).toString();
-const getBatchScript = fs.readFileSync(path.join(__dirname, 'lua/getBatch.lua')).toString();
-const removeMessagesScript = fs.readFileSync(path.join(__dirname, 'lua/removeMessages.lua')).toString();
-const reinsertUnprocessedScript = fs.readFileSync(path.join(__dirname, 'lua/reinsertUnprocessed.lua')).toString();
+const lua = require('./lua.json');
 
 function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
   if (typeof queueName !== 'string') {
@@ -22,19 +16,19 @@ function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
 
   this.redisClient.defineCommand('pushMessage', {
     numberOfKeys: 1,
-    lua: pushMessageScript
+    lua: lua.pushMessage
   });
   this.redisClient.defineCommand('getBatch', {
     numberOfKeys: 1,
-    lua: getBatchScript
+    lua: lua.getBatch
   });
   this.redisClient.defineCommand('removeMessages', {
     numberOfKeys: 1,
-    lua: removeMessagesScript
+    lua: lua.removeMessages
   });
   this.redisClient.defineCommand('reinsertUnprocessed', {
     numberOfKeys: 1,
-    lua: reinsertUnprocessedScript
+    lua: lua.reinsertUnprocessed
   });
 }
 
