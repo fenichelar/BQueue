@@ -20,8 +20,9 @@ For distributing the queue accross multiple Redis instances, use a `queueCount` 
 const ioredis = require('ioredis');
 const bqueue = require('bqueue');
 let redisClient = new ioredis();
+const queueName = 'queue';
 const queueCount = 10;
-let queue = new BQueue(redisClient, queueCount);
+let queue = new BQueue(redisClient, queueName, queueCount);
 ```
 
 ### Add a message to the queue

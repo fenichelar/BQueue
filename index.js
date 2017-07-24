@@ -7,14 +7,17 @@ const getBatchScript = fs.readFileSync(path.join(__dirname, 'lua/getBatch.lua'))
 const removeMessagesScript = fs.readFileSync(path.join(__dirname, 'lua/removeMessages.lua')).toString();
 const reinsertUnprocessedScript = fs.readFileSync(path.join(__dirname, 'lua/reinsertUnprocessed.lua')).toString();
 
-function BQueue(redisClient, queueCount = 1) {
-  if (!Number.isInteger(queueCount)) {
+function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
+  if (typeof queueName !== 'string') {
+    throw new Error('Queue name must be a string!');
+  } else if (!Number.isInteger(queueCount)) {
     throw new Error('Queue count must be an integer!');
   } else if (queueCount < 1 || queueCount > 100) {
     throw new Error('Queue count must be between 1 and 100!');
   }
 
   this.redisClient = redisClient;
+  this.queueName = queueName;
   this.queueCount = queueCount;
 
   this.redisClient.defineCommand('pushMessage', {
@@ -38,7 +41,7 @@ function BQueue(redisClient, queueCount = 1) {
 BQueue.prototype.pushMessage = function(message = '') {
   return new Promise((resolve, reject) => {
     const queueNumber = Math.floor(Math.random()*this.queueCount);
-    const queue = 'bqueue:' + queueNumber;
+    const queue = this.queueName + ':' + queueNumber;
     const id = uuid.v4();
     this.redisClient.pushMessage(queue, id, JSON.stringify({id, message}), (err, result) => {
       if (err) {
@@ -62,7 +65,7 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
       return reject(Error('Processing timeout must be between 1000 and 604800000!'));
     }
     const queueNumber = Math.floor(Math.random()*this.queueCount);
-    const queue = 'bqueue:' + queueNumber;
+    const queue = this.queueName + ':' + queueNumber;
     this.redisClient.getBatch(queue, batchSize, processingTimeout, (err, results) => {
       if (err) {
         return reject(err);
@@ -91,7 +94,7 @@ BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
 BQueue.prototype.reinsertUnprocessed = function() {
   return new Promise((resolve, reject) => {
     const queueNumber = Math.floor(Math.random()*this.queueCount);
-    const queue = 'bqueue:' + queueNumber;
+    const queue = this.queueName + ':' + queueNumber;
     this.redisClient.reinsertUnprocessed(queue, (err, result) => {
       if (err) {
         return reject(err);
