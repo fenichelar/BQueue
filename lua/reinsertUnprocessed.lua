@@ -10,7 +10,7 @@ for _, id in ipairs(processingMessages) do
   local stillProcessing = redis.call('EXISTS', messageProcessingKey)
   if stillProcessing == 0 then
     table.insert(ids, id)
-    redis.call('LPUSH', queueKey, id)
+    redis.call('RPUSH', queueKey, id)
     redis.call('LREM', processingKey, -1, id)
   end
 end
