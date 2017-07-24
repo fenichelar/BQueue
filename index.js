@@ -1,6 +1,11 @@
 const uuid = require('uuid');
 const fs = require('fs');
 
+const pushMessageScript = fs.readFileSync('lua/pushMessage.lua').toString();
+const getBatchScript = fs.readFileSync('lua/getBatch.lua').toString();
+const removeMessagesScript = fs.readFileSync('lua/removeMessages.lua').toString();
+const reinsertUnprocessedScript = fs.readFileSync('lua/reinsertUnprocessed.lua').toString();
+
 function BQueue(redisClient, queueCount = 1) {
   if (!Number.isInteger(queueCount)) {
     throw new Error('Queue count must be an integer!');
@@ -13,19 +18,19 @@ function BQueue(redisClient, queueCount = 1) {
 
   this.redisClient.defineCommand('pushMessage', {
     numberOfKeys: 1,
-    lua: fs.readFileSync('lua/pushMessage.lua').toString()
+    lua: pushMessageScript
   });
   this.redisClient.defineCommand('getBatch', {
     numberOfKeys: 1,
-    lua: fs.readFileSync('lua/getBatch.lua').toString()
+    lua: getBatchScript
   });
   this.redisClient.defineCommand('removeMessages', {
     numberOfKeys: 1,
-    lua: fs.readFileSync('lua/removeMessages.lua').toString()
+    lua: removeMessagesScript
   });
   this.redisClient.defineCommand('reinsertUnprocessed', {
     numberOfKeys: 1,
-    lua: fs.readFileSync('lua/reinsertUnprocessed.lua').toString()
+    lua: reinsertUnprocessedScript
   });
 }
 
