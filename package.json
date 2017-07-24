@@ -1,6 +1,6 @@
 {
   "name": "bqueue",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Reliable, distributed batch message processing using Redis",
   "license": "MIT",
   "author": {
