@@ -51,16 +51,16 @@ BQueue.prototype.pushMessage = function(message = '') {
 };
 
 BQueue.prototype.getBatch = function(batchSize = 1, processingTimeout = 5000) {
-  if (!Number.isInteger(batchSize)) {
-    throw new Error('Batch size must be an integer!');
-  } else if (batchSize < 1 || batchSize > 1000) {
-    throw new Error('Batch batchSize must be between 1 and 1000!');
-  } else if (!Number.isInteger(processingTimeout)) {
-    throw new Error('Processing timeout must be an integer!');
-  } else if (processingTimeout < 1000 || processingTimeout > 604800000) {
-    throw new Error('Processing timeout must be between 1000 and 604800000!');
-  }
   return new Promise((resolve, reject) => {
+    if (!Number.isInteger(batchSize)) {
+      return reject(Error('Batch size must be an integer!'));
+    } else if (batchSize < 1 || batchSize > 1000) {
+      return reject(Error('Batch batchSize must be between 1 and 1000!'));
+    } else if (!Number.isInteger(processingTimeout)) {
+      return reject(Error('Processing timeout must be an integer!'));
+    } else if (processingTimeout < 1000 || processingTimeout > 604800000) {
+      return reject(Error('Processing timeout must be between 1000 and 604800000!'));
+    }
     const queueNumber = Math.floor(Math.random()*this.queueCount);
     const queue = 'bqueue:' + queueNumber;
     this.redisClient.getBatch(queue, batchSize, processingTimeout, (err, results) => {
