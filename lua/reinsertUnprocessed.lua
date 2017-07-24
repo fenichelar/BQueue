@@ -12,6 +12,8 @@ for _, id in ipairs(processingMessages) do
     table.insert(ids, id)
     redis.call('RPUSH', queueKey, id)
     redis.call('LREM', processingKey, -1, id)
+  else
+    return ids
   end
 end
 return ids
