@@ -25,7 +25,7 @@
     "lua.json"
   ],
   "scripts": {
-    "prepublish": "node lua.js"
+    "prepare": "node lua.js"
   },
   "dependencies": {
     "uuid": "^3.1.0"
