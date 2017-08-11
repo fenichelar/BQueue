@@ -7,7 +7,6 @@ for _, id in ipairs(ARGV) do
   redis.call('LREM', processingKey, -1, id)
   local messageKey = queueKey .. ':' .. id
   local messageProcessingKey = messageKey .. ':processing'
-  redis.call('DEL', messageKey)
-  redis.call('DEL', messageProcessingKey)
+  redis.call('DEL', messageKey, messageProcessingKey)
 end
 return ids
