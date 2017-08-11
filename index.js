@@ -86,12 +86,12 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000)
 };
 
 BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000) {
-  if (!Number.isInteger(maxMessages)) {
-    return reject(Error('Max messages must be an integer!'));
-  } else if (maxMessages < 1 || maxMessages > 10000) {
-    return reject(Error('Max messages must be between 1 and 10000!'));
-  }
   return new Promise((resolve, reject) => {
+    if (!Number.isInteger(maxMessages)) {
+      return reject(Error('Max messages must be an integer!'));
+    } else if (maxMessages < 1 || maxMessages > 10000) {
+      return reject(Error('Max messages must be between 1 and 10000!'));
+    }
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
     this.redisClient.reinsertUnprocessed(queue, maxMessages, (err, result) => {
