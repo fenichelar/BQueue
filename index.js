@@ -100,7 +100,11 @@ BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000) {
       if (err) {
         return reject(err);
       } else {
-        return resolve(result);
+        return resolve({
+          name: this.queueName,
+          number: queueNumber,
+          ids: result
+        });
       }
     });
   });
