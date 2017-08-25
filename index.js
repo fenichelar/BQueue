@@ -66,6 +66,8 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000)
       } else {
         const messages = results.map(value => JSON.parse(value));
         return resolve({
+          name: this.queueName,
+          number: queueNumber,
           messages: messages,
           remove: () => {
             return new Promise((resolve, reject) => {
