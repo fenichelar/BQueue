@@ -69,7 +69,7 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000)
           messages: messages,
           remove: () => {
             return new Promise((resolve, reject) => {
-              const ids = messages.map(message => message.id);
+              const ids = messages.filter(message => message).map(message => message.id);
               this.redisClient.removeMessages(queue, ...ids, (err, results) => {
                 if (err) {
                   return reject(err);
