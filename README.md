@@ -32,8 +32,8 @@ A message can be anything: a string, number, function, object, etc. A message is
 ```javascript
 const message = 'Test Message';
 queue.pushMessage(message)
-.then(id => {
-  console.log('Message ID: ' + id);
+.then(response => {
+  console.log('Message ID: ' + response.id);
 })
 .catch(err => {
   console.error(err);
@@ -75,8 +75,8 @@ Randomly selects a queue and reinserts unprocessed messages back into it for fut
 ```javascript
 const maxMessages = 1000;
 queue.reinsertUnprocessed(maxMessages)
-.then(ids => {
-  console.log('Unprocessed Message IDs: ' + ids.join(','));
+.then(response => {
+  console.log('Unprocessed Message IDs: ' + response.ids.join(','));
 })
 .catch(err => {
   console.error(err);

@@ -14,10 +14,6 @@ function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
   this.queueName = queueName;
   this.queueCount = queueCount;
 
-  this.redisClient.defineCommand('pushMessage', {
-    numberOfKeys: 1,
-    lua: lua.pushMessage
-  });
   this.redisClient.defineCommand('getBatch', {
     numberOfKeys: 1,
     lua: lua.getBatch
@@ -37,11 +33,18 @@ BQueue.prototype.pushMessage = function(message = '') {
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
     const id = uuid.v4();
-    this.redisClient.pushMessage(queue, id, JSON.stringify({id, message}), (err, result) => {
+    const record = JSON.stringify({id, message});
+    const queueKey = '{' + queue + '}:messages';
+    const messageKey = queueKey + ':' + id;
+    this.redisClient.multi().lpush(queueKey, id).set(messageKey, record).exec(err => {
       if (err) {
         return reject(err);
       } else {
-        return resolve(result);
+        return resolve({
+          name: this.queueName,
+          number: queueNumber,
+          id: id
+        });
       }
     });
   });
