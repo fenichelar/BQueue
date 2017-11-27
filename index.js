@@ -36,7 +36,7 @@ BQueue.prototype.pushMessage = function(message = '') {
     const record = JSON.stringify({id, message});
     const queueKey = '{' + queue + '}:messages';
     const messageKey = queueKey + ':' + id;
-    this.redisClient.multi().lpush(queueKey, id).set(messageKey, record).exec(err => {
+    this.redisClient.pipeline().set(messageKey, record).lpush(queueKey, id).exec(err => {
       if (err) {
         return reject(err);
       } else {
