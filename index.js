@@ -1,5 +1,12 @@
-const uuid = require('uuid');
 const lua = require('./lua.json');
+
+function uuid(placeholder) {
+  if (placeholder) {
+    return (placeholder ^ (crypto.randomBytes(1)[0] % 16) >> placeholder / 4).toString(16);
+  } else {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
+  }
+}
 
 function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
   if (typeof queueName !== 'string') {
