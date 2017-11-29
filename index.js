@@ -39,7 +39,7 @@ BQueue.prototype.pushMessage = function(message = '', debug = false) {
   return new Promise((resolve, reject) => {
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
-    const id = uuid.v4();
+    const id = uuid();
     const record = JSON.stringify({
       id: id,
       message: message
