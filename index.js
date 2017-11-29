@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const lua = require('./lua.json');
 
 function uuid(placeholder) {
