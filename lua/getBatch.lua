@@ -7,7 +7,9 @@ local messages = {}
 while maxBatchSize > 0 do
   maxBatchSize = maxBatchSize - 1
   local id = redis.call('RPOPLPUSH', queueKey, processingKey)
-  if not id then return messages end
+  if not id then
+    return messages
+  end
   local messageKey = queueKey .. ':' .. id
   local messageProcessingKey = messageKey .. ':processing'
   local message = redis.call('GET', messageKey)
