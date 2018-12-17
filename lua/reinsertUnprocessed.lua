@@ -1,17 +1,18 @@
+local call = redis.call
 local queue = KEYS[1]
 local maxMessages = tonumber(ARGV[1])
 local queueKey = '{' .. queue .. '}:messages'
 local processingKey = '{' .. queue .. '}:processing'
-local processingMessages = redis.call('LRANGE', processingKey, 0 - maxMessages, -1)
+local processingMessages = call('LRANGE', processingKey, 0 - maxMessages, -1)
 local ids = {}
-for _, id in ipairs(processingMessages) do
-  local messageKey = queueKey .. ':' .. id
-  local messageProcessingKey = messageKey .. ':processing'
-  local stillProcessing = redis.call('EXISTS', messageProcessingKey)
+for i = 1, #processingMessages do
+  local id = processingMessages[i]
+  local messageProcessingKey = queueKey .. ':' .. id .. ':processing'
+  local stillProcessing = call('EXISTS', messageProcessingKey)
   if stillProcessing == 0 then
-    table.insert(ids, id)
-    redis.call('RPUSH', queueKey, id)
-    redis.call('LREM', processingKey, -1, id)
+    ids[#ids + 1] = id
+    call('RPUSH', queueKey, id)
+    call('LREM', processingKey, -1, id)
   else
     return ids
   end
