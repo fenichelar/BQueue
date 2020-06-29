@@ -9,7 +9,7 @@ for i = 1, #messages do
   if count == 1 then
     local messageKey = queueKey .. id
     local messageProcessingKey = messageKey .. ':processing'
-    call('UNLINK', messageKey, messageProcessingKey)
+    call('DEL', messageKey, messageProcessingKey)
   end
 end
 return messages
