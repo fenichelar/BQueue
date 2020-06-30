@@ -36,7 +36,7 @@ function BQueue(redisClient, queueName = 'bqueue', queueCount = 1) {
   });
 }
 
-BQueue.prototype.pushMessage = function(message = '', debug = false) {
+BQueue.prototype.pushMessage = function(message = '') {
   return new Promise((resolve, reject) => {
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
@@ -47,10 +47,6 @@ BQueue.prototype.pushMessage = function(message = '', debug = false) {
     });
     const queueKey = '{' + queue + '}:messages';
     const messageKey = queueKey + ':' + id;
-    if (debug) {
-      console.log('set ' + messageKey + ' ' + record);
-      console.log('lpush ' + queueKey + ' ' + id);
-    }
     this.redisClient.pipeline().set(messageKey, record).lpush(queueKey, id).exec(err => {
       if (err) {
         return reject(err);
@@ -65,7 +61,7 @@ BQueue.prototype.pushMessage = function(message = '', debug = false) {
   });
 };
 
-BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000, debug = false) {
+BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000) {
   return new Promise((resolve, reject) => {
     if (!Number.isInteger(maxBatchSize)) {
       return reject(Error('Max batch size must be an integer!'));
@@ -78,9 +74,6 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000,
     }
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
-    if (debug) {
-      console.log('getBatch ' + queue + ' ' + maxBatchSize + ' ' + processingTimeout);
-    }
     this.redisClient.getBatch(queue, maxBatchSize, processingTimeout, (err, results) => {
       if (err) {
         return reject(err);
@@ -90,12 +83,9 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000,
           name: this.queueName,
           number: queueNumber,
           messages: messages,
-          remove: (debug = false) => {
+          remove: () => {
             return new Promise((resolve, reject) => {
               const ids = messages.filter(message => message).map(message => message.id);
-              if (debug) {
-                console.log('removeMessages ' + queue + ' ' + ids.join(' '));
-              }
               this.redisClient.removeMessages(queue, ...ids, (err, results) => {
                 if (err) {
                   return reject(err);
@@ -111,7 +101,7 @@ BQueue.prototype.getBatch = function(maxBatchSize = 1, processingTimeout = 5000,
   });
 };
 
-BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000, debug = false) {
+BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000) {
   return new Promise((resolve, reject) => {
     if (!Number.isInteger(maxMessages)) {
       return reject(Error('Max messages must be an integer!'));
@@ -120,9 +110,6 @@ BQueue.prototype.reinsertUnprocessed = function(maxMessages = 1000, debug = fals
     }
     const queueNumber = Math.floor(Math.random() * this.queueCount);
     const queue = this.queueName + ':' + queueNumber;
-    if (debug) {
-      console.log('reinsertUnprocessed ' + queue + ' ' + maxMessages);
-    }
     this.redisClient.reinsertUnprocessed(queue, maxMessages, (err, result) => {
       if (err) {
         return reject(err);
